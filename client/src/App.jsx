@@ -6,6 +6,8 @@ function App() {
 
     async function analyseTask() {
         try {
+            console.log("clicked the analyse button")
+
             const response = await fetch("http://127.0.0.1:3000/api/analyse", {
                 method: "POST",
                 headers: {
@@ -19,6 +21,8 @@ function App() {
             const data = await response.json();
 
             setResult(data);
+            console.log("done processing")
+
         } catch (error) {
             console.error("Error:", error);
         }
