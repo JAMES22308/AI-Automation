@@ -8,7 +8,7 @@ function App() {
         try {
             console.log("clicked the analyse button")
 
-            const response = await fetch("http://127.0.0.1:3000/api/analyse", {
+            const response = await fetch("https://ai-task-assistant-api.onrender.com/analyse", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
