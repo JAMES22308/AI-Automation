@@ -1,11 +1,10 @@
-# python
+
 import time
 import os
 import json
 import requests
 
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -17,6 +16,7 @@ load_dotenv()
 app = FastAPI()
 
 
+# Allow requests from the React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,20 +25,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request format
+
+# -----------------------------
+# Request formats
+# -----------------------------
+
 class TaskRequest(BaseModel):
     task_text: str
 
 
-# Home/test endpoint
+class ChatRequest(BaseModel):
+    message: str
+
+
+# -----------------------------
+# Home / test endpoint
+# -----------------------------
+
 @app.get("/")
 def home():
     return {
-        "message": "Python AI service is running"
+        "message": "Python AI service is running smoothly"
     }
 
 
+# -----------------------------
 # AI task analysis endpoint
+# -----------------------------
+
 @app.post("/analyse")
 def analyse(task: TaskRequest):
 
@@ -100,7 +114,60 @@ Do not add any text before or after the JSON.
         ]
     }
 
-    # Try Gemini up to 3 times if the service temporarily returns 503
+    # Try Gemini up to 3 times if temporarily unavailable
+    # response = None
+
+    # for attempt in range(3):
+
+    #     try:
+    #         response = requests.post(
+    #             url,
+    #             headers=headers,
+    #             json=body,
+    #             timeout=30
+    #         )
+
+    #     except requests.RequestException as error:
+
+    #         print("Request error:", error)
+
+    #         if attempt < 2:
+    #             print(f"Retrying... {attempt + 1}/3")
+    #             time.sleep(2)
+    #             continue
+
+    #         raise HTTPException(
+    #             status_code=503,
+    #             detail="Unable to connect to Gemini API."
+    #         )
+
+    #     print("Gemini status:", response.status_code)
+
+    #     # Successful response
+    #     if response.status_code == 200:
+    #         break
+
+    #     # Gemini temporarily unavailable
+    #     if response.status_code == 503 and attempt < 2:
+
+    #         print(
+    #             f"Gemini temporarily unavailable. "
+    #             f"Retrying... {attempt + 2}/3"
+    #         )
+
+    #         time.sleep(2)
+    #         continue
+
+    #     # Other API error or all retries failed
+    #     print("Gemini error:", response.text)
+
+    #     raise HTTPException(
+    #         status_code=response.status_code,
+    #         detail=f"Gemini API error: {response.text}"
+    #     )
+
+
+
     response = None
 
     for attempt in range(3):
@@ -114,7 +181,8 @@ Do not add any text before or after the JSON.
             )
 
         except requests.RequestException as error:
-            print("Request error:", error)
+
+            print("Gemini connection error:", repr(error))
 
             if attempt < 2:
                 print(f"Retrying... {attempt + 1}/3")
@@ -123,18 +191,16 @@ Do not add any text before or after the JSON.
 
             raise HTTPException(
                 status_code=503,
-                detail="Unable to connect to Gemini API."
+                detail=f"Unable to connect to Gemini API: {error}"
             )
 
         print("Gemini status:", response.status_code)
 
-        # Successful response
         if response.status_code == 200:
             break
 
-        # Gemini temporarily unavailable
-        # Gemini temporarily unavailable
         if response.status_code == 503 and attempt < 2:
+
             print(
                 f"Gemini temporarily unavailable. "
                 f"Retrying... {attempt + 2}/3"
@@ -143,20 +209,32 @@ Do not add any text before or after the JSON.
             time.sleep(2)
             continue
 
-        # Other API error or all retries failed
         print("Gemini error:", response.text)
 
         raise HTTPException(
             status_code=response.status_code,
-            detail="Gemini API request failed"
+            detail=f"Gemini API error: {response.text}"
         )
+
+
+
+
+
+
+
+
+
 
     # Convert Gemini response into Python data
     try:
         data = response.json()
 
     except ValueError:
-        print("Gemini returned invalid JSON:", response.text)
+
+        print(
+            "Gemini returned invalid JSON:",
+            response.text
+        )
 
         raise HTTPException(
             status_code=502,
@@ -168,7 +246,11 @@ Do not add any text before or after the JSON.
         ai_text = data["candidates"][0]["content"]["parts"][0]["text"]
 
     except (KeyError, IndexError, TypeError):
-        print("Unexpected Gemini response:", data)
+
+        print(
+            "Unexpected Gemini response:",
+            data
+        )
 
         raise HTTPException(
             status_code=502,
@@ -183,6 +265,7 @@ Do not add any text before or after the JSON.
         analysis = json.loads(ai_text)
 
     except json.JSONDecodeError:
+
         print("JSON parsing failed.")
         print("Raw response:", ai_text)
 
@@ -191,7 +274,7 @@ Do not add any text before or after the JSON.
             detail="Gemini returned invalid JSON."
         )
 
-    # Validate the fields returned by Gemini
+    # Validate required fields
     required_fields = [
         "priority",
         "category",
@@ -201,19 +284,25 @@ Do not add any text before or after the JSON.
     for field in required_fields:
 
         if field not in analysis:
+
             raise HTTPException(
                 status_code=502,
                 detail=f"Gemini response is missing '{field}'."
             )
 
     # Validate priority
-    if analysis["priority"] not in ["High", "Medium", "Low"]:
+    if analysis["priority"] not in [
+        "High",
+        "Medium",
+        "Low"
+    ]:
+
         raise HTTPException(
             status_code=502,
             detail="Gemini returned an invalid priority."
         )
 
-    # Return final result to the client
+    # Return final result
     return {
         "task": task.task_text,
         "priority": analysis["priority"],
@@ -221,3 +310,179 @@ Do not add any text before or after the JSON.
         "suggestion": analysis["suggestion"]
     }
 
+
+# -----------------------------
+# General AI chat endpoint
+# -----------------------------
+
+# -----------------------------
+# General AI chat endpoint
+# -----------------------------
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+
+    # Get Gemini API key from .env
+    api_key = os.getenv("GEMINI_API_KEY")
+
+    if not api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="GEMINI_API_KEY is missing"
+        )
+
+    # Gemini API endpoint
+    url = (
+        "https://generativelanguage.googleapis.com/"
+        "v1beta/models/gemini-3.5-flash:generateContent"
+    )
+
+    # Request headers
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": api_key
+    }
+
+    # Prompt sent to Gemini
+    prompt = f"""
+You are a helpful AI assistant.
+
+Answer the user's request clearly and accurately.
+
+You can help with:
+- General questions
+- Programming
+- Code generation
+- Debugging
+- Explanations
+- Writing
+- Task planning
+- Technical questions
+- Data analysis
+- Comparisons
+
+If the user asks for programming code:
+- Provide working code.
+- Use the programming language requested.
+- Format code using markdown code blocks.
+- Briefly explain the code when useful.
+
+Use Markdown formatting when appropriate.
+
+User request:
+
+{request.message}
+"""
+
+    # Request body
+    body = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ]
+    }
+
+    # Try Gemini up to 3 times if temporarily unavailable
+    response = None
+
+    for attempt in range(3):
+
+        try:
+
+            response = requests.post(
+                url,
+                headers=headers,
+                json=body,
+                timeout=30
+            )
+
+        except requests.RequestException as error:
+
+            print(
+                "Gemini connection error:",
+                repr(error)
+            )
+
+            if attempt < 2:
+
+                print(
+                    f"Retrying... {attempt + 1}/3"
+                )
+
+                time.sleep(2)
+
+                continue
+
+            raise HTTPException(
+                status_code=503,
+                detail=f"Unable to connect to Gemini API: {error}"
+            )
+
+        print(
+            "Gemini status:",
+            response.status_code
+        )
+
+        # Successful response
+        if response.status_code == 200:
+            break
+
+        # Gemini temporarily unavailable
+        if response.status_code == 503 and attempt < 2:
+
+            print(
+                f"Gemini temporarily unavailable. "
+                f"Retrying... {attempt + 2}/3"
+            )
+
+            time.sleep(2)
+
+            continue
+
+        # Other API error
+        print(
+            "Gemini error:",
+            response.text
+        )
+
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=f"Gemini API error: {response.text}"
+        )
+
+    # Convert Gemini response to JSON
+    try:
+
+        data = response.json()
+
+        ai_text = data["candidates"][0]["content"]["parts"][0]["text"]
+
+    except (
+        ValueError,
+        KeyError,
+        IndexError,
+        TypeError
+    ):
+
+        print(
+            "Unexpected Gemini response:",
+            response.text
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail="Unexpected response received from Gemini."
+        )
+
+    print("Gemini response:")
+    print(ai_text)
+
+    # Return AI response
+    return {
+        "response": ai_text
+    }

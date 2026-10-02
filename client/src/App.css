@@ -1,4 +1,4 @@
-
+}
 * {
     box-sizing: border-box;
 }
@@ -12,235 +12,473 @@ body {
 
 .app {
     min-height: 100vh;
-    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    padding: 30px 20px;
 }
 
-.container {
+.chat-container {
     width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
+    max-width: 900px;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
 }
 
-/* Header */
+/* =========================
+   Header
+========================= */
 
-.header {
-    text-align: center;
-    margin-bottom: 35px;
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
 }
 
 .logo {
-    width: 55px;
-    height: 55px;
-    margin: 0 auto 18px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #111827;
+    color: #ffffff;
+    font-size: 23px;
+}
+
+.chat-header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.chat-header p {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* =========================
+   Messages Area
+========================= */
+
+.messages {
+    flex: 1;
+    padding: 30px 28px;
+    overflow-y: auto;
+}
+
+/* Welcome screen */
+
+.welcome {
+    max-width: 650px;
+    margin: 70px auto;
+    text-align: center;
+}
+
+.welcome-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 16px;
     background: #111827;
-    color: white;
-    font-size: 28px;
+    color: #ffffff;
+    font-size: 30px;
 }
 
-.header h1 {
+.welcome h2 {
     margin: 0;
-    font-size: 38px;
-    font-weight: 700;
+    font-size: 28px;
     color: #111827;
 }
 
-.header p {
-    margin-top: 12px;
+.welcome p {
+    max-width: 550px;
+    margin: 12px auto 25px;
     color: #6b7280;
-    font-size: 16px;
     line-height: 1.6;
 }
 
-/* Task input card */
+/* Example buttons */
 
-.task-card {
-    background: white;
-    padding: 30px;
-    border-radius: 18px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+.examples {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.task-card label {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 15px;
-    font-weight: 600;
+.examples button {
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
     color: #374151;
-}
-
-.task-card input {
-    width: 100%;
-    padding: 15px 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.task-card input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
-}
-
-.task-card input::placeholder {
-    color: #9ca3af;
-}
-
-/* Button */
-
-.task-card button {
-    width: 100%;
-    margin-top: 16px;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    background: #111827;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
 
-.task-card button:hover:not(:disabled) {
+.examples button:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
     transform: translateY(-1px);
-    opacity: 0.9;
 }
 
-.task-card button:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
+/* =========================
+   Individual Messages
+========================= */
+
+.message {
+    display: flex;
+    gap: 13px;
+    max-width: 850px;
+    margin: 0 auto 26px;
 }
 
-/* Result */
-
-.result-card {
-    margin-top: 25px;
-    background: white;
-    padding: 30px;
-    border-radius: 18px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-}
-
-.result-header {
+.message-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.result-header h2 {
-    margin: 0;
-    font-size: 22px;
-    color: #111827;
-}
-
-/* Priority */
-
-.priority {
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.priority.high {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-.priority.medium {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.priority.low {
-    background: #dcfce7;
-    color: #166534;
-}
-
-/* Result sections */
-
-.result-section {
-    padding: 18px 0;
-    border-top: 1px solid #e5e7eb;
-}
-
-.result-label {
-    display: block;
-    margin-bottom: 7px;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #6b7280;
-}
-
-.result-section p {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* Suggestion */
-
-.suggestion {
-    margin-top: 10px;
-    padding: 18px;
-    border-radius: 12px;
+    justify-content: center;
+    border-radius: 10px;
     background: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.suggestion .result-label {
-    text-transform: none;
-    letter-spacing: 0;
+.assistant-message .message-avatar {
+    background: #111827;
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.message-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.message-role {
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
     color: #374151;
 }
 
-.suggestion p {
-    margin: 8px 0 0;
-    line-height: 1.6;
+.message-text {
+    line-height: 1.65;
+    color: #1f2937;
+    font-size: 15px;
 }
 
-/* Footer */
+/* =========================
+   Markdown
+========================= */
 
-footer {
-    text-align: center;
-    margin-top: 30px;
+.message-text p {
+    margin: 0 0 12px;
 }
 
-footer p {
-    margin: 0;
+.message-text p:last-child {
+    margin-bottom: 0;
+}
+
+.message-text h1,
+.message-text h2,
+.message-text h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.message-text h1 {
+    font-size: 24px;
+}
+
+.message-text h2 {
+    font-size: 20px;
+}
+
+.message-text h3 {
+    font-size: 17px;
+}
+
+.message-text ul,
+.message-text ol {
+    margin: 8px 0 14px 22px;
+    padding: 0;
+}
+
+.message-text li {
+    margin-bottom: 6px;
+}
+
+.message-text strong {
+    font-weight: 700;
+    color: #111827;
+}
+
+.message-text a {
+    color: #2563eb;
+}
+
+.message-text code {
+    background: #f1f3f5;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.9em;
+}
+
+.message-text pre {
+    margin: 14px 0;
+    padding: 16px;
+    background: #1e1e1e;
+    color: #f5f5f5;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.message-text pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre;
+}
+
+/* Tables */
+
+.message-text table {
+    width: 100%;
+    margin: 15px 0;
+    border-collapse: collapse;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.message-text th,
+.message-text td {
+    padding: 9px 12px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.message-text th {
+    background: #f9fafb;
+    font-weight: 700;
+}
+
+/* Blockquotes */
+
+.message-text blockquote {
+    margin: 14px 0;
+    padding: 10px 16px;
+    border-left: 4px solid #d1d5db;
+    background: #f9fafb;
+    color: #6b7280;
+}
+
+/* =========================
+   Thinking Indicator
+========================= */
+
+.typing {
+    display: inline-block;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* =========================
+   Input Area
+========================= */
+
+.input-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 18px 22px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.input-area textarea {
+    flex: 1;
+    min-height: 48px;
+    max-height: 160px;
+    padding: 13px 15px;
+    resize: none;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #111827;
+    background: #ffffff;
+}
+
+.input-area textarea:focus {
+    border-color: #9ca3af;
+    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.15);
+}
+
+.input-area textarea::placeholder {
     color: #9ca3af;
-    font-size: 13px;
 }
 
-/* Mobile */
+.input-area textarea:disabled {
+    background: #f9fafb;
+}
 
-@media (max-width: 600px) {
+/* Send button */
+
+.input-area button {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 12px;
+    background: #111827;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.input-area button:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.input-area button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* =========================
+   Footer
+========================= */
+
+.chat-container footer {
+    padding: 0 20px 15px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+/* =========================
+   Scrollbar
+========================= */
+
+.messages::-webkit-scrollbar {
+    width: 7px;
+}
+
+.messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 700px) {
+
     .app {
-        padding: 35px 15px;
+        padding: 0;
     }
 
-    .header h1 {
-        font-size: 30px;
+    .chat-container {
+        min-height: 100vh;
+        border-radius: 0;
+        border: none;
     }
 
-    .task-card,
-    .result-card {
-        padding: 22px;
+    .chat-header {
+        padding: 16px 18px;
     }
 
-    .result-header {
-        align-items: flex-start;
+    .messages {
+        padding: 22px 16px;
+    }
+
+    .welcome {
+        margin: 50px auto;
+    }
+
+    .welcome h2 {
+        font-size: 24px;
+    }
+
+    .examples {
+        flex-direction: column;
+    }
+
+    .examples button {
+        width: 100%;
+    }
+
+    .message {
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+    }
+
+    .message-text {
+        font-size: 14px;
+    }
+
+    .input-area {
+        padding: 12px;
+    }
+
+    .input-area button {
+        width: 44px;
+        height: 44px;
+    }
+
+    .input-area textarea {
+        min-height: 44px;
+    }
+
+    .chat-container footer {
+        padding: 0 20px 15px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 11px;
+        line-height: 1.5;
     }
 }
-
