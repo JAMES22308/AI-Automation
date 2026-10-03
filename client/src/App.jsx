@@ -312,7 +312,7 @@ function App() {
 
 
                <footer>
-                AI responses may not always be accurate.
+                Powered by AI.
                 <br />
                 Created by Michael James Soria
             </footer>
