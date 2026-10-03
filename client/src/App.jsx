@@ -38,7 +38,7 @@ function App() {
         try {
 
             const response = await fetch(
-                "https://ai-task-assistant-api.onrender.com/chat",
+                "https://ai-task-assistant-api.onrender.com//chat",
                 {
                     method: "POST",
 
