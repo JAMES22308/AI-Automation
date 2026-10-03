@@ -335,7 +335,7 @@ def chat(request: ChatRequest):
             detail="No AI provider API keys are configured."
         )
 
-   prompt = f"""
+    prompt = f"""
 You are Lexia, an AI assistant created by Michael James Soria.
 
 Your name is Lexia.
